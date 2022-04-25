@@ -96,7 +96,6 @@ export default class JugadasController {
     let val = await valores.aggregate([
       {
         $project: {
-          idpartida: 1,
           valordeloponente: 1,
           valorcreador: 1
         },
@@ -105,10 +104,6 @@ export default class JugadasController {
     ])
 
 
-
-
   }
-
-
 
 }

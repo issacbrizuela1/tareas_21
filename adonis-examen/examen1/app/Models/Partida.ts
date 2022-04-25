@@ -4,8 +4,8 @@ import mongoose, { Schema } from 'mongoose';
 
 const sch_PARTIDA=new Schema({
   id:Number,
-  creador:String,
-  oponente:String,
+  creador:Number,
+  oponente:Number,
   fecha:Object,
   estado:String,
   ganador:String,

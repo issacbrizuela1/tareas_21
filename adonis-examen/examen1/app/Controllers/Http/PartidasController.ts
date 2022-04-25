@@ -244,6 +244,7 @@ export default class PartidasController {
         console.log(err)
       })
   }
+
   async mostrarpartidas_sin_oponente({ response }: HttpContextContract) {
     try {
       const response = await mongoose.createConnection(URL).model('partidas', sch_PARTIDA).aggregate(
@@ -258,5 +259,39 @@ export default class PartidasController {
       return error
     }
 
+  }
+  async updatepartida({ request }) {
+    const datos = request.all()
+    const con = mongoose.createConnection(URL, {
+      maxIdleTimeMS: 6000,
+    })
+    const preb = con.model('partida', Partida)
+    let idp = await this.autoincrement()
+    const id = (await idp) + 1
+    let ganador = datos.ganador
+    if (ganador == '') {
+      
+    } else {
+      ganador = 'no definido'
+    }
+    let estado = ''
+    if (ganador != 'no definido') {
+      estado = 'finalizado'
+    } else {
+      estado = 'pausa'
+    }
+    preb
+      .updateOne(
+        { id: datos.id },
+        {
+          ganador: datos.ganador
+        }
+      )
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }

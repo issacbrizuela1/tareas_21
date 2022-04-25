@@ -19,8 +19,8 @@ Route.post('/insertarPartidasinoponente','PartidasController.insertarPartidasino
 Route.post('/agregarOponente','PartidasController.agregarOponente')
 Route.get('/mostrarpartidassinoponente','PartidasController.mostrarpartidas_sin_oponente')
 
-
-
+//updatepartida
+Route.put('/agregarganador','PartidasController.updatepartida')
 //extras
 Route.get('/id','PartidasController.autoincrement')
 Route.get('/url','PartidasController.verfecha')//autoincrement
