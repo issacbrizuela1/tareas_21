@@ -1,5 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
+
+
 const sch_PARTIDA=new Schema({
   id:Number,
   creador:String,

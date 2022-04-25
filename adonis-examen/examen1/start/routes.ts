@@ -7,19 +7,27 @@ Route.group(() => {
     console.log(auth.use('api').user!)
     return { resp: 'activo' }
   })
+  Route.get('straerUsuario', 'AuthController.getUser')
+  Route.get('idusuario', 'AuthController.idusuario')
 }).middleware('auth')
-Route.get('/usuario','AuthController.mostrarusuario')
+Route.get('',()=>{
+  return {"hola": "hay jalando"}
+})
 //partidas
 Route.post('/insertarPartida','PartidasController.insertarPartida')
 Route.post('/insertarPartidasinoponente','PartidasController.insertarPartidasinoponente')
 Route.post('/agregarOponente','PartidasController.agregarOponente')
+Route.get('/mostrarpartidassinoponente','PartidasController.mostrarpartidas_sin_oponente')
 
 
 
 //extras
 Route.get('/id','PartidasController.autoincrement')
-Route.get('/url','PartidasController.verfecha')
+Route.get('/url','PartidasController.verfecha')//autoincrement
+Route.get('/idultimapartida','PartidasController.autoincrement')
 
 
 //jugadas
-Route.post('/insertarJugada','JugadasController.insertarJugada')
+Route.post('/insertarJugada','JugadasController.insertarJugadacreador')
+Route.get('/idultimajugada','JugadasController.autoincrement')
+//insertarJugadacreador

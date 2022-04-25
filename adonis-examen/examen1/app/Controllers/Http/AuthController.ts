@@ -25,9 +25,15 @@ export default class AuthController {
     const token = await auth.attempt(email, password)
     return token.toJSON()
   }
-  async mostrarusuario({request})
-  {
-    return "se consulto"
+  public async getUser({ auth }) {
+    await auth.use('api').authenticate()
+    const user = auth.use('api').user.$attributes
+    return user
+  }
+  public async idusuario({ auth }) {
+    await auth.use('api').authenticate()
+    const user = auth.use('api').user.$attributes
+    return user['id']
   }
   
 }

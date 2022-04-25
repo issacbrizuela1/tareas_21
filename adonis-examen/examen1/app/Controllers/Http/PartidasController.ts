@@ -2,16 +2,23 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Partida from 'App/Models/Partida'
 import Env from '@ioc:Adonis/Core/Env'
 import mongoose, { Schema } from 'mongoose'
+import sch_PARTIDA from 'App/Models/Partida'
+
+
+let URL = Env.get('MOGO_URL')
+
+
 
 export default class PartidasController {
-  private URL = Env.get('MOGO_URL')
+
   private mongo = mongoose
   private fecha = Date
   private actual = this.fecha.now()
+
   async conexcion() {
     try {
       await this.mongo
-        .connect(this.URL, {
+        .connect(URL, {
           maxIdleTimeMS: 6000,
         })
         .then((db) => console.log('conectado a' + this.mongo.connection.name))
@@ -21,12 +28,12 @@ export default class PartidasController {
     }
   }
   async mostrarurl() {
-    return this.URL
+    return URL
   }
   //EXTRAS
   async autoincrement() {
     try {
-      const con = mongoose.createConnection(this.URL)
+      const con = mongoose.createConnection(URL)
       const preb = con.model('partida', Partida)
       let s = await preb.aggregate([
         {
@@ -51,11 +58,36 @@ export default class PartidasController {
       return error
     }
   }
-  //CRUD PARTIDA
 
-  async insertarPartida({ request }) {
-    const datos = request.all()
-    const con = mongoose.createConnection(this.URL, {
+  public async historialPartidas({ response, params }: HttpContextContract) {
+    try {
+      const con = mongoose.createConnection(URL, {
+        maxIdleTimeMS: 6000,
+      })
+      const parti = con.model('partida', Partida).find({idUsuario : params.id}).exec().the((date)=>{
+        response.status(200).json({
+          message: 'Successfully.',
+          data: date
+        })
+      }).catch(()=>{
+        response.status(404).json({
+          message: "Failing created a new model."
+        })
+      })
+      
+    }
+    catch (error) {
+     
+    }
+  }
+
+  
+
+  //CRUD PARTIDA
+  async insertarPartida({ request, response }) {
+    try {
+      const datos = request.all()
+    const con = mongoose.createConnection(URL, {
       maxIdleTimeMS: 6000,
     })
     let date = new Date()
@@ -89,11 +121,20 @@ export default class PartidasController {
       .catch((err) => {
         console.log(err)
       })
+      response.status(200).json({
+        message: 'Successfully.',
+      })
+    } catch (error) {
+      response.status(404).json({
+        message : "Failing created a new model."
+      })
+    }
+    
   }
 
-  async update_oponente({ request }) {
+  async update_oponente({ request,response }) {
     const datos = request.all()
-    const con = mongoose.createConnection(this.URL, {
+    const con = mongoose.createConnection(URL, {
       maxIdleTimeMS: 6000,
     })
     let date = new Date()
@@ -125,13 +166,15 @@ export default class PartidasController {
         console.log(data)
       })
       .catch((err) => {
-        console.log(err)
+        return response.status(404).json({
+          message : err
+        })
       })
   }
   //SIN OPONENTE
   async insertarPartidasinoponente({ request }) {
     const datos = request.all()
-    const con = mongoose.createConnection(this.URL, {
+    const con = mongoose.createConnection(URL, {
       maxIdleTimeMS: 6000,
     })
     let date = new Date()
@@ -168,7 +211,7 @@ export default class PartidasController {
   }
   async agregarOponente({ request }) {
     const datos = request.all()
-    const con = mongoose.createConnection(this.URL, {
+    const con = mongoose.createConnection(URL, {
       maxIdleTimeMS: 6000,
     })
     let date = new Date()
@@ -189,7 +232,7 @@ export default class PartidasController {
     }
     preb
       .updateOne(
-        { id: datos.id},
+        { id: datos.id },
         {
           oponente: datos.oponente
         }
@@ -200,5 +243,20 @@ export default class PartidasController {
       .catch((err) => {
         console.log(err)
       })
+  }
+  async mostrarpartidas_sin_oponente({ response }: HttpContextContract) {
+    try {
+      const response = await mongoose.createConnection(URL).model('partidas', sch_PARTIDA).aggregate(
+        [{
+          $match: {
+            oponente: ''
+          }
+        }]
+      ).exec()
+      return response
+    } catch (error) {
+      return error
+    }
+
   }
 }
